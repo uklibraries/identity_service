@@ -15,7 +15,12 @@ selenium = "^4.25.0"
 pytest = "^8.3.3"
 black = "^24.10.0"
 pytest-watch = "^4.2.0"
+pytest-django = "^4.9.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "identity.settings"
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
