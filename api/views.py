@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+
 # Create your views here.
 @api_view(["GET"])
 def root(request):
@@ -12,4 +13,4 @@ def root(request):
                 "naans": reverse("naans"),
             },
         }
-        return Response(data, status=status.HTTP_200_OK) 
+        return Response(data, status=status.HTTP_200_OK)
