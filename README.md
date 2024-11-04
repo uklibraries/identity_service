@@ -8,6 +8,39 @@ written in [Django](https://www.djangoproject.com/) and the
 This software is still in development flux.
 
 
+Installation
+------------
+
+For development, you will need:
+
+* [Python](https://www.python.org/) - currently tested with 3.13
+* [Poetry](https://python-poetry.org/)
+* [SQLite](https://www.sqlite.org/)
+
+Install and extract the code:
+
+```
+git clone git@github.com:uklibraries/identity_service.git
+```
+
+Run a server (useful for poking around, not needed for testing):
+
+```
+cd identity_service
+poetry install --no-root
+poetry run python manage.py migrate
+poetry run python manage.py runserver
+```
+
+Run tests:
+
+```
+poetry run pytest-watcher .
+```
+
+Note: this is currently watching all tests, both unit and integration.
+
+
 License
 -------
 
