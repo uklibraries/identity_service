@@ -6,7 +6,6 @@ from minter.models import Naan
 from minter.serializers import NaanSerializer
 
 
-# Create your views here.
 @api_view(["GET", "POST"])
 def naans(request):
     partial_response = {
