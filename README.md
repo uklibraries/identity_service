@@ -45,3 +45,9 @@ License
 -------
 
 Copyright (C) 2024 MLE Slone. Licensed under the [MIT license](LICENSE.md).
+
+This project incorporates the [UpdateMixin](https://github.com/encode/django-rest-framework/discussions/8606#discussioncomment-3899252)
+by [Kangaroux](https://github.com/Kangaroux).
+
+This project incorporates the [ValidateFieldsMixin](https://github.com/encode/django-rest-framework/issues/1655#issuecomment-1110743102)
+by [dmugtasimov](https://github.com/dmugtasimov).

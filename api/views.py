@@ -10,6 +10,7 @@ def root(request):
     if request.method == "GET":
         data = {
             "links": {
+                "self": request.path,
                 "naans": reverse("naans"),
             },
         }
