@@ -1,4 +1,4 @@
-from rest_framework import serializers, status
+from rest_framework import generics, serializers, status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -6,98 +6,62 @@ from minter.models import Naan
 from minter.serializers import NaanSerializer
 
 
-@api_view(["GET", "POST"])
-def naans(request):
-    partial_response = {
-        "links": {
-            "self": request.path,
-        },
-    }
-    if request.method == "GET":
-        naans = Naan.objects.all()
-        serializer = NaanSerializer(naans, many=True)
-        return Response(
-            {
-                **partial_response,
-                **{
-                    "data": serializer.data,
-                },
-            },
-            status=status.HTTP_200_OK,
-        )
+class NaanList(generics.ListCreateAPIView):
+    queryset = Naan.objects.all()
+    serializer_class = NaanSerializer
 
-    elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = NaanSerializer(data=data)
-        if serializer.is_valid():
-            serializer.create(data)
-            return Response(
-                {
-                    **partial_response,
-                    **{
-                        "data": serializer.data,
-                    },
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(["GET", "PATCH", "DELETE"])
-def view_naan(request, naan_id):
-    try:
-        the_naan = Naan.objects.get(number=naan_id)
-        partial_response = {
+    def get(self, request, *args, **kwargs):
+        response = self.list(request, *args, **kwargs)
+        response.data = {
             "links": {
                 "self": request.path,
             },
+            "data": response.data,
         }
-    except Naan.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return response
 
-    if request.method == "GET":
-        serializer = NaanSerializer(the_naan)
-        return Response(
-            {
-                **partial_response,
-                **{
-                    "data": serializer.data,
-                },
+    def post(self, request, *args, **kwargs):
+        response = self.create(request, *args, **kwargs)
+        response.data = {
+            "links": {
+                "self": request.path,
             },
-            status=status.HTTP_200_OK,
-        )
+            "data": response.data,
+        }
+        return response
 
-    elif request.method == "PATCH":
-        update_data = JSONParser().parse(request)
-        serializer = NaanSerializer(the_naan, data=update_data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {
-                    **partial_response,
-                    **{
-                        "data": serializer.data,
-                    },
-                },
-                status=status.HTTP_200_OK,
-            )
-        return Response(
-            {
-                **partial_response,
-                **{
-                    "errors": serializer.errors,
-                },
-            },
-            status=status.HTTP_400_BAD_REQUEST,
-        )
 
-    elif request.method == "DELETE":
-        the_naan.delete()
-        return Response(
-            {
-                "links": {
-                    "self": request.path,
-                },
+class NaanItem(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Naan.objects.all()
+    serializer_class = NaanSerializer
+    lookup_field = "number"
+
+    def get(self, request, *args, **kwargs):
+        response = self.retrieve(request, *args, **kwargs)
+        response.data = {
+            "links": {
+                "self": request.path,
             },
-            status=status.HTTP_204_NO_CONTENT,
-        )
+            "data": response.data,
+        }
+        return response
+
+    def patch(self, request, *args, **kwargs):
+        response = self.partial_update(request, *args, **kwargs)
+        response.data = {
+            "links": {
+                "self": request.path,
+            },
+            "data": response.data,
+        }
+        return response
+
+    def delete(self, request, *args, **kwargs):
+        response = self.destroy(request, *args, **kwargs)
+        response.data = {
+            "links": {
+                "self": request.path,
+            },
+            "data": response.data,
+        }
+        return response

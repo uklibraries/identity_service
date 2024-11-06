@@ -44,7 +44,7 @@ class NaanTests(APITestCase):
         Naan.objects.create(
             number=16417, organization="University of Kentucky", abbreviation="UKY"
         )
-        self.url = reverse("view-naan", kwargs={"naan_id": 16417})
+        self.url = reverse("view-naan", kwargs={"number": 16417})
         self.response = self.client.get(self.url, format="json")
         self.assertEqual(self.response.status_code, status.HTTP_200_OK)
         data = self.response.data["data"]
@@ -61,9 +61,9 @@ class NaanTests(APITestCase):
         Naan.objects.create(
             number=working_data["number"],
             organization=working_data["organization"],
-            abbreviation=working_data["abbreviation"]
+            abbreviation=working_data["abbreviation"],
         )
-        self.url = reverse("view-naan", kwargs={"naan_id": 16417})
+        self.url = reverse("view-naan", kwargs={"number": 16417})
         patch_data = {
             "organization": "Kentucky State University",
         }
@@ -89,7 +89,7 @@ class NaanTests(APITestCase):
         Naan.objects.create(
             number=16417, organization="University of Kentucky", abbreviation="UKY"
         )
-        self.url = reverse("view-naan", kwargs={"naan_id": 16417})
+        self.url = reverse("view-naan", kwargs={"number": 16417})
         data = {
             "number": 16415,
         }
@@ -103,7 +103,7 @@ class NaanTests(APITestCase):
             number=16417, organization="University of Kentucky", abbreviation="UKY"
         )
         self.assertEqual(Naan.objects.count(), 1)
-        self.url = reverse("view-naan", kwargs={"naan_id": 16417})
+        self.url = reverse("view-naan", kwargs={"number": 16417})
         self.response = self.client.delete(self.url, format="json")
         self.assertEqual(self.response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Naan.objects.count(), 0)

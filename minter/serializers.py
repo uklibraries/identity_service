@@ -3,8 +3,6 @@ from minter.models import Naan
 
 
 class NaanSerializer(serializers.ModelSerializer):
-#class NaanSerializer(CreateReadOnlyModelSerializer):
-    id = serializers.IntegerField(read_only=True)
     organization = serializers.CharField(max_length=255)
     abbreviation = serializers.CharField(max_length=5)
 
