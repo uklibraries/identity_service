@@ -46,7 +46,7 @@ def naans(request):
 @api_view(["GET", "PATCH", "DELETE"])
 def view_naan(request, naan_id):
     try:
-        the_naan = Naan.objects.get(id=naan_id)
+        the_naan = Naan.objects.get(number=naan_id)
         partial_response = {
             "links": {
                 "self": request.path,
