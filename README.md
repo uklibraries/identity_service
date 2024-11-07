@@ -3,7 +3,8 @@ identity_service
 
 `identity_service` is an [ARK and NOID](https://arks.org)-based Identity service
 written in [Django](https://www.djangoproject.com/) and the
-[Django REST framework](https://www.django-rest-framework.org/).
+[Django REST framework](https://www.django-rest-framework.org/)
+with [DRF-SimpleJWT](https://github.com/jazzband/djangorestframework-simplejwt).
 
 This software is still in development flux.
 
@@ -29,6 +30,7 @@ Run a server (useful for poking around, not needed for testing):
 cd identity_service
 poetry install --no-root
 poetry run python manage.py migrate
+poetry run python manage.py createsuperuser
 poetry run python manage.py runserver
 ```
 

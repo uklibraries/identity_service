@@ -2,13 +2,14 @@ import pytest
 
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
 from minter.models import Naan
 from minter.serializers import NaanSerializer
+from integration_tests.mixins import ApiJwtTestCase
 
 
-class RootTests(APITestCase):
+class RootTests(ApiJwtTestCase):
     def setUp(self):
+        self.authenticate()
         self.url = reverse("root")
         self.response = self.client.get(self.url, format="json")
 
@@ -24,7 +25,10 @@ class RootTests(APITestCase):
         self.assertEqual(links["naans"], reverse("naans"))
 
 
-class NaanTests(APITestCase):
+class NaanTests(ApiJwtTestCase):
+    def setUp(self):
+        self.authenticate()
+
     def tearDown(self):
         self.assertEqual(self.response.data["links"]["self"], self.url)
 
