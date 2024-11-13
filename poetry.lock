@@ -431,6 +431,20 @@ files = [
 ]
 
 [[package]]
+name = "noid-minter"
+version = "0.1.1"
+description = "An ARK minter based on Noid."
+optional = false
+python-versions = "<4.0,>=3.12"
+files = [
+    {file = "noid_minter-0.1.1-py3-none-any.whl", hash = "sha256:c98e654ff966f69ec2c762d430b0a5945cafa2df2c4ac8f4c4f5ba35caa5a873"},
+    {file = "noid_minter-0.1.1.tar.gz", hash = "sha256:5cee80adb37c83a466ad23e4d0657c7eaaba319e3ab00f3fa514d465db09ffc5"},
+]
+
+[package.dependencies]
+pyrand48 = ">=0.1.4,<0.2.0"
+
+[[package]]
 name = "packaging"
 version = "24.1"
 description = "Core utilities for Python packages"
@@ -510,6 +524,17 @@ crypto = ["cryptography (>=3.4.0)"]
 dev = ["coverage[toml] (==5.0.4)", "cryptography (>=3.4.0)", "pre-commit", "pytest (>=6.0.0,<7.0.0)", "sphinx", "sphinx-rtd-theme", "zope.interface"]
 docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
 tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
+
+[[package]]
+name = "pyrand48"
+version = "0.1.4"
+description = "An implementation of the rand48 linear congruential generator."
+optional = false
+python-versions = "<4.0,>=3.12"
+files = [
+    {file = "pyrand48-0.1.4-py3-none-any.whl", hash = "sha256:05000938e1a4a5895f82df53ca96b1b20e68b4ac4210a2f7da947e791083ef18"},
+    {file = "pyrand48-0.1.4.tar.gz", hash = "sha256:4113be6ffb096efe39c501b2ac0f1e4cdfb96d227a210a76c1bdfa4b2bd8b82b"},
+]
 
 [[package]]
 name = "pytest"
@@ -672,4 +697,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.13"
-content-hash = "ac07b0b91f5362ed3704098e61709c0eb04ebf04b64cbab11f104da2a643bc48"
+content-hash = "5df420a53541e63b8c90b9f54f75f2f77a9f496cf412e9448aa3bb1f2a37fcf2"

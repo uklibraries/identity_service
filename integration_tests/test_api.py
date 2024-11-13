@@ -2,8 +2,7 @@ import pytest
 
 from django.urls import reverse
 from rest_framework import status
-from minter.models import Naan
-from minter.serializers import NaanSerializer
+from minter.models import Naan, Minter
 from integration_tests.mixins import ApiJwtTestCase
 
 
@@ -129,3 +128,49 @@ class NaanTests(ApiJwtTestCase):
             "abbreviation": "USLOC",
         }
         self.assertIn(usloc, self.response.data["data"])
+
+class MinterTests(ApiJwtTestCase):
+    def setUp(self):
+        self.authenticate()
+        Naan.objects.create(
+            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+        )
+
+    def test_create_minter(self):
+        self.url = reverse("minters", kwargs={"number": 16417})
+        data = {
+            "shoulder": "tv",
+            "template": "tv.sddd",
+        }
+        self.response = self.client.post(self.url, data, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Minter.objects.count(), 1)
+        self.assertEqual(Minter.objects.get().naan, Naan.objects.get())
+        self.assertEqual(Minter.objects.get().shoulder, "tv")
+        self.assertEqual(Minter.objects.get().template, "tv.sddd")
+
+    def test_retrieve_minter(self):
+        Minter.objects.create(
+            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd",
+        )
+        self.url = reverse("view-minter", kwargs={"number": 16417, "shoulder": "tv"})
+        self.response = self.client.get(self.url, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        data = self.response.data["data"]
+        assert data["shoulder"] == "tv"
+        assert data["template"] == "tv.sdd"
+        assert "state" not in data
+
+    def test_mint_identifiers(self):
+        Minter.objects.create(
+            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd",
+        )
+        self.url = reverse("view-minter", kwargs={"number": 16417, "shoulder": "tv"})
+        self.response = self.client.post(self.url, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        data = self.response.data["data"]
+        assert data["ark"] == "16417/tv00"
+        self.response = self.client.post(self.url, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        data = self.response.data["data"]
+        assert data["ark"] == "16417/tv01"

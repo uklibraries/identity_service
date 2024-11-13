@@ -11,6 +11,7 @@ django = "^5.1.2"
 djangorestframework = "^3.15.2"
 djangorestframework-simplejwt = "^5.3.1"
 cryptography = "^43.0.3"
+noid-minter = "^0.1.1"
 
 
 [tool.poetry.group.dev.dependencies]
