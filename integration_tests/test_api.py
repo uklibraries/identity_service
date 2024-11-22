@@ -3,6 +3,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from minter.models import Naan, Minter
+from binder.models import Role
 from integration_tests.mixins import ApiJwtTestCase
 
 
@@ -174,3 +175,24 @@ class MinterTests(ApiJwtTestCase):
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         data = self.response.data["data"]
         assert data["ark"] == "16417/tv01"
+
+class RoleTests(ApiJwtTestCase):
+    def setUp(self):
+        self.authenticate()
+        Naan.objects.create(
+            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+        )
+        Minter.objects.create(
+            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd",
+        )
+
+    def test_create_role(self):
+        self.url = reverse("roles", kwargs={"number": 16417})
+        data = {
+            "name": "KUDL",
+        }
+        self.response = self.client.post(self.url, data, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Role.objects.count(), 1)
+        self.assertEqual(Role.objects.get().naan, Naan.objects.get())
+        self.assertEqual(Role.objects.get().name, "KUDL")
