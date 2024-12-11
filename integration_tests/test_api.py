@@ -3,7 +3,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from minter.models import Naan, Minter
-from binder.models import Role
+from binder.models import Ark, Role
 from integration_tests.mixins import ApiJwtTestCase
 
 
@@ -196,3 +196,27 @@ class RoleTests(ApiJwtTestCase):
         self.assertEqual(Role.objects.count(), 1)
         self.assertEqual(Role.objects.get().naan, Naan.objects.get())
         self.assertEqual(Role.objects.get().name, "KUDL")
+
+class ArkTests(ApiJwtTestCase):
+    def test_create_ark(self):
+        self.authenticate()
+        Naan.objects.create(
+            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+        )
+        Minter.objects.create(
+            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd"
+        )
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(
+            name="KUDL"
+        )
+        # note: number is in identifier
+        self.url = reverse("arks", kwargs={"role": 1, "identifier": partial_identifier, "number": 16417})
+        self.response = self.client.post(self.url, format="json")
+        print(repr(self.response.content))
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Ark.objects.count(), 1)
+        self.assertEqual(Ark.objects.get().role, Role.objects.get())
+        self.assertEqual(Ark.objects.get().identifier, identifier)
