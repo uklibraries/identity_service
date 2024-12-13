@@ -6,7 +6,9 @@ import noid_minter.minter as nm
 class NaanModelTest(TestCase):
     def setUp(self):
         Naan.objects.create(
-            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+            number=16417,
+            organization="University of Kentucky Libraries",
+            abbreviation="UKL",
         )
 
     def test_organization(self):
@@ -23,7 +25,9 @@ class NaanModelTest(TestCase):
 class MinterModelTest(TestCase):
     def setUp(self):
         Naan.objects.create(
-            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+            number=16417,
+            organization="University of Kentucky Libraries",
+            abbreviation="UKL",
         )
         Minter.objects.create(
             naan=Naan.objects.get(number=16417), shoulder="tv", template="tv.sddd"

@@ -13,8 +13,8 @@ class NaanSerializer(serializers.ModelSerializer):
 
 class MinterSerializer(serializers.ModelSerializer):
     number = serializers.SlugRelatedField(
-        slug_field = "number",
-        queryset = Naan.objects.all(),
+        slug_field="number",
+        queryset=Naan.objects.all(),
         required=False,
     )
 

@@ -113,7 +113,9 @@ class MinterItem(generics.RetrieveUpdateAPIView):
     def post(self, request, *args, **kwargs):
         instance = self.get_object()
         ark = instance.mint()
-        serializer = self.get_serializer(instance, data={"state": instance.state}, partial=True)
+        serializer = self.get_serializer(
+            instance, data={"state": instance.state}, partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         data = serializer.data
@@ -126,5 +128,5 @@ class MinterItem(generics.RetrieveUpdateAPIView):
                 },
                 "data": data,
             },
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )

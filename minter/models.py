@@ -13,10 +13,12 @@ class Minter(models.Model):
     naan = models.ForeignKey(Naan, null=True, on_delete=models.RESTRICT)
     shoulder = models.CharField(unique=True, default="tv", max_length=5)
     template = models.CharField(unique=True, default="tv.sddd", max_length=64)
-    state=models.JSONField(default=dict)
+    state = models.JSONField(default=dict)
 
     def _initial_state(self):
-        return nm.Minter({"template":self.template, "naan":str(self.naan.number)}).to_json()
+        return nm.Minter(
+            {"template": self.template, "naan": str(self.naan.number)}
+        ).to_json()
 
     def save(self, *args, **kwargs):
         if not self.state:
