@@ -5,9 +5,9 @@ from binder.models import Ark, Role
 
 class RoleSerializer(serializers.ModelSerializer):
     number = serializers.SlugRelatedField(
-        slug_field = "number",
-        queryset = Naan.objects.all(),
-        required = False,
+        slug_field="number",
+        queryset=Naan.objects.all(),
+        required=False,
     )
 
     name = serializers.CharField(max_length=255)
@@ -20,8 +20,15 @@ class RoleSerializer(serializers.ModelSerializer):
 
 class ArkSerializer(serializers.ModelSerializer):
     role = RoleSerializer(many=False, read_only=True)
-    identifier = serializers.CharField(max_length=255, default="unidentified")
+    identifier = serializers.CharField(max_length=255)
 
     class Meta:
         model = Ark
-        fields = ["identifier", "role"]
+        fields = (
+            "identifier",
+            "role",
+            "role_id",
+        )
+        extra_kwargs = {
+            "role_id": {"source": "role", "write_only": True},
+        }

@@ -17,16 +17,20 @@ class RoleList(generics.ListCreateAPIView):
         naan = Naan.objects.get(number=self.kwargs["number"])
         serializer.save(naan=naan)
 
+
 class ArkList(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Ark.objects.all()
     serializer_class = ArkSerializer
 
-    def perform_create(self, serializer):
-        identifier = "/".join([
-            str(self.kwargs["number"]),
-            self.kwargs["identifier"],
-        ])
-        role = Role.objects.get(id=self.kwargs["role"])
-        serializer.save(identifier=identifier, role=role)
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        data["identifier"] = kwargs.pop("identifier", "unidentified")
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )

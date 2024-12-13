@@ -130,11 +130,14 @@ class NaanTests(ApiJwtTestCase):
         }
         self.assertIn(usloc, self.response.data["data"])
 
+
 class MinterTests(ApiJwtTestCase):
     def setUp(self):
         self.authenticate()
         Naan.objects.create(
-            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+            number=16417,
+            organization="University of Kentucky Libraries",
+            abbreviation="UKL",
         )
 
     def test_create_minter(self):
@@ -152,7 +155,9 @@ class MinterTests(ApiJwtTestCase):
 
     def test_retrieve_minter(self):
         Minter.objects.create(
-            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd",
+            naan=Naan.objects.first(),
+            shoulder="tv",
+            template="tv.sdd",
         )
         self.url = reverse("view-minter", kwargs={"number": 16417, "shoulder": "tv"})
         self.response = self.client.get(self.url, format="json")
@@ -164,7 +169,9 @@ class MinterTests(ApiJwtTestCase):
 
     def test_mint_identifiers(self):
         Minter.objects.create(
-            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd",
+            naan=Naan.objects.first(),
+            shoulder="tv",
+            template="tv.sdd",
         )
         self.url = reverse("view-minter", kwargs={"number": 16417, "shoulder": "tv"})
         self.response = self.client.post(self.url, format="json")
@@ -176,14 +183,19 @@ class MinterTests(ApiJwtTestCase):
         data = self.response.data["data"]
         assert data["ark"] == "16417/tv01"
 
+
 class RoleTests(ApiJwtTestCase):
     def setUp(self):
         self.authenticate()
         Naan.objects.create(
-            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+            number=16417,
+            organization="University of Kentucky Libraries",
+            abbreviation="UKL",
         )
         Minter.objects.create(
-            naan=Naan.objects.first(), shoulder="tv", template="tv.sdd",
+            naan=Naan.objects.first(),
+            shoulder="tv",
+            template="tv.sdd",
         )
 
     def test_create_role(self):
@@ -197,11 +209,14 @@ class RoleTests(ApiJwtTestCase):
         self.assertEqual(Role.objects.get().naan, Naan.objects.get())
         self.assertEqual(Role.objects.get().name, "KUDL")
 
+
 class ArkTests(ApiJwtTestCase):
     def test_create_ark(self):
         self.authenticate()
         Naan.objects.create(
-            number=16417, organization="University of Kentucky Libraries", abbreviation="UKL"
+            number=16417,
+            organization="University of Kentucky Libraries",
+            abbreviation="UKL",
         )
         Minter.objects.create(
             naan=Naan.objects.first(), shoulder="tv", template="tv.sdd"
@@ -209,13 +224,9 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(
-            name="KUDL"
-        )
-        # note: number is in identifier
-        self.url = reverse("arks", kwargs={"role": 1, "identifier": partial_identifier, "number": 16417})
-        self.response = self.client.post(self.url, format="json")
-        print(repr(self.response.content))
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.response = self.client.post(self.url, data={"role_id": 1}, format="json")
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Ark.objects.count(), 1)
         self.assertEqual(Ark.objects.get().role, Role.objects.get())

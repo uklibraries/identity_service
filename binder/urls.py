@@ -3,5 +3,5 @@ from binder import views
 
 urlpatterns = [
     path("roles/<int:number>/", views.RoleList.as_view(), name="roles"),
-    path("arks/<int:number>/<str:identifier>/<int:role>/", views.ArkList.as_view(), name="arks"),
+    path("arks/<path:identifier>/", views.ArkList.as_view(), name="arks"),
 ]
