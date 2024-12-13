@@ -21,6 +21,7 @@ class RoleSerializer(serializers.ModelSerializer):
 class ArkSerializer(serializers.ModelSerializer):
     role = RoleSerializer(many=False, read_only=True)
     identifier = serializers.CharField(max_length=255)
+    metadata = serializers.JSONField(default=dict)
 
     class Meta:
         model = Ark
@@ -28,6 +29,7 @@ class ArkSerializer(serializers.ModelSerializer):
             "identifier",
             "role",
             "role_id",
+            "metadata",
         )
         extra_kwargs = {
             "role_id": {"source": "role", "write_only": True},

@@ -10,6 +10,7 @@ class Role(models.Model):
 class Ark(models.Model):
     role = models.ForeignKey(Role, null=True, on_delete=models.RESTRICT)
     identifier = models.CharField(max_length=255, default="unidentified")
+    metadata = models.JSONField(default=dict)
 
     class Meta:
         constraints = [

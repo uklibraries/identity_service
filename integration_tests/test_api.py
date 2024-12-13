@@ -231,3 +231,10 @@ class ArkTests(ApiJwtTestCase):
         self.assertEqual(Ark.objects.count(), 1)
         self.assertEqual(Ark.objects.get().role, Role.objects.get())
         self.assertEqual(Ark.objects.get().identifier, identifier)
+        self.assertEqual(
+            Ark.objects.get().metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+            },
+        )
