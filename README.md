@@ -46,4 +46,4 @@ Note: this is currently watching all tests, both unit and integration.
 License
 -------
 
-Copyright (C) 2024 MLE Slone. Licensed under the [MIT license](LICENSE.md).
+Copyright (C) 2024-2025 MLE Slone. Licensed under the [MIT license](LICENSE.md).
