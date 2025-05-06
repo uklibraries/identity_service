@@ -13,6 +13,16 @@ class RoleList(generics.ListCreateAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
 
+    def get(self, request, *args, **kwargs):
+        response = self.list(request, *args, **kwargs)
+        response.data = {
+            "links": {
+                "self": request.path,
+            },
+            "data": response.data,
+        }
+        return response
+
     def perform_create(self, serializer):
         naan = Naan.objects.get(number=self.kwargs["number"])
         serializer.save(naan=naan)

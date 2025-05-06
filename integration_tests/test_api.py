@@ -209,6 +209,15 @@ class RoleTests(ApiJwtTestCase):
         self.assertEqual(Role.objects.get().naan, Naan.objects.get())
         self.assertEqual(Role.objects.get().name, "KUDL")
 
+    def test_list_roles(self):
+        Role.objects.create(name="KUDL")
+        Role.objects.create(name="ExploreUK")
+        self.url = reverse("roles")
+        self.response = self.client.get(self.url, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.assertIn({"id": 1, "name": "KUDL"}, self.response.data["data"])
+        self.assertIn({"id": 2, "name": "ExploreUK"}, self.response.data["data"])
+
 
 class ArkTests(ApiJwtTestCase):
     def test_create_ark(self):

@@ -14,7 +14,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Role
-        fields = ["number", "name"]
+        fields = ["id", "number", "name"]
         extra_kwargs = {"number": {"required": True}}
 
 
