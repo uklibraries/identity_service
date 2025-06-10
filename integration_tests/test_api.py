@@ -250,6 +250,38 @@ class ArkTests(ApiJwtTestCase):
             },
         )
 
+    def test_binder_includes_links(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.response = self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("links", self.response.data)
+        links = self.response.data["links"]
+        self.assertEqual(links["self"], self.url)
+
+    def test_binder_includes_metadata(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.response = self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("data", self.response.data)
+        data = self.response.data["data"]
+        self.assertIn("metadata", data)
+        metadata = data["metadata"]
+        self.assertEqual(
+            metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+            },
+        )
+
     def test_add_metadata_to_ark(self):
         minter = Minter.objects.get()
         identifier = minter.mint()
@@ -320,6 +352,52 @@ class ArkTests(ApiJwtTestCase):
         self.assertEqual(self.response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             Ark.objects.get().metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "cat_name": "Twinky Weddle",
+                "cat_type": "good",
+            },
+        )
+
+    def test_binder_edit_returns_metadata(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.url = reverse(
+            "ark-bind", kwargs={"identifier": identifier, "key": "cat_name"}
+        )
+        self.response = self.client.patch(self.url, data={"value": "Butterscotch"})
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.assertIn("data", self.response.data)
+        data = self.response.data["data"]
+        self.assertIn("metadata", data)
+        self.assertEqual(
+            data["metadata"],
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "cat_name": "Butterscotch",
+            },
+        )
+
+        self.url = reverse("ark-bind-metadata", kwargs={"identifier": identifier})
+        self.response = self.client.patch(
+            self.url,
+            data={
+                "cat_name": "Twinky Weddle",
+                "cat_type": "good",
+            },
+        )
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.assertIn("data", self.response.data)
+        data = self.response.data["data"]
+        self.assertIn("metadata", data)
+        self.assertEqual(
+            data["metadata"],
             {
                 "id": "16417/tv00",
                 "short_id": "tv00",

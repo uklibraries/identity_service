@@ -47,7 +47,14 @@ class ArkList(generics.ListCreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            {
+                "links": {
+                    "self": request.path,
+                },
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+            headers=headers,
         )
 
 
@@ -77,4 +84,11 @@ class ArkBinding(generics.RetrieveUpdateDestroyAPIView):
         if getattr(instance, "_prefetched_objects_cache", None):
             instance._prefetched_objects_cache = {}
 
-        return Response(serializer.data)
+        return Response(
+            {
+                "links": {
+                    "self": request.path,
+                },
+                "data": serializer.data,
+            }
+        )
