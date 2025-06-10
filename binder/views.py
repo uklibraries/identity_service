@@ -49,3 +49,32 @@ class ArkList(generics.ListCreateAPIView):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+
+class ArkBinding(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = Ark.objects.all()
+    serializer_class = ArkSerializer
+    lookup_field = "identifier"
+
+    def patch(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        instance = self.get_object()
+
+        key = kwargs.get("key")
+        if key is not None:
+            value = request.data.get("value")
+            instance.metadata[key] = value
+        else:
+            for key in request.data.keys():
+                instance.metadata[key] = request.data.get(key)
+
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, "_prefetched_objects_cache", None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)

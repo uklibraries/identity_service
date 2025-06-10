@@ -220,7 +220,7 @@ class RoleTests(ApiJwtTestCase):
 
 
 class ArkTests(ApiJwtTestCase):
-    def test_create_ark(self):
+    def setUp(self):
         self.authenticate()
         Naan.objects.create(
             number=16417,
@@ -230,6 +230,8 @@ class ArkTests(ApiJwtTestCase):
         Minter.objects.create(
             naan=Naan.objects.first(), shoulder="tv", template="tv.sdd"
         )
+
+    def test_create_ark(self):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
@@ -245,5 +247,83 @@ class ArkTests(ApiJwtTestCase):
             {
                 "id": "16417/tv00",
                 "short_id": "tv00",
+            },
+        )
+
+    def test_add_metadata_to_ark(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.url = reverse(
+            "ark-bind", kwargs={"identifier": identifier, "key": "cat_name"}
+        )
+        self.response = self.client.patch(self.url, data={"value": "Butterscotch"})
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            Ark.objects.get().metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "cat_name": "Butterscotch",
+            },
+        )
+
+    def test_add_multiple_metadata_fields_to_ark(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.url = reverse("ark-bind-metadata", kwargs={"identifier": identifier})
+        self.response = self.client.patch(
+            self.url,
+            data={
+                "name_type": "cat",
+                "name": "Butterscotch",
+            },
+        )
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            Ark.objects.get().metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "name_type": "cat",
+                "name": "Butterscotch",
+            },
+        )
+
+    def test_successive_updates_merge_properly(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.url = reverse("ark-bind-metadata", kwargs={"identifier": identifier})
+        self.response = self.client.patch(
+            self.url,
+            data={
+                "cat_name": "Butterscotch",
+                "cat_type": "good",
+            },
+        )
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.url = reverse(
+            "ark-bind", kwargs={"identifier": identifier, "key": "cat_name"}
+        )
+        self.response = self.client.patch(self.url, data={"value": "Twinky Weddle"})
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            Ark.objects.get().metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "cat_name": "Twinky Weddle",
+                "cat_type": "good",
             },
         )
