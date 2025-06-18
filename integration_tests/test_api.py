@@ -3,7 +3,9 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from minter.models import Naan, Minter
+from minter.serializers import NaanSerializer
 from binder.models import Ark, Role
+from binder.serializers import RoleSerializer
 from integration_tests.mixins import ApiJwtTestCase
 
 
@@ -88,8 +90,8 @@ class NaanTests(ApiJwtTestCase):
         for key in working_data:
             assert data[key] == working_data[key]
 
-    @pytest.mark.skip("DRF rejects this kind of error in PUT/PATCH requests")
-    def test_cannot_update_id(self):
+    # @pytest.mark.skip("DRF rejects this kind of error in PUT/PATCH requests")
+    def skip_test_cannot_update_id(self):
         Naan.objects.create(
             number=16417, organization="University of Kentucky", abbreviation="UKY"
         )
@@ -122,13 +124,8 @@ class NaanTests(ApiJwtTestCase):
         self.url = reverse("naans")
         self.response = self.client.get(self.url, format="json")
         self.assertEqual(self.response.status_code, status.HTTP_200_OK)
-        usloc = {
-            "id": 2,
-            "number": 12026,
-            "organization": "Library of Congress",
-            "abbreviation": "USLOC",
-        }
-        self.assertIn(usloc, self.response.data["data"])
+        for naan in Naan.objects.all():
+            self.assertIn(NaanSerializer(naan).data, self.response.data["data"])
 
 
 class MinterTests(ApiJwtTestCase):
@@ -215,8 +212,8 @@ class RoleTests(ApiJwtTestCase):
         self.url = reverse("roles")
         self.response = self.client.get(self.url, format="json")
         self.assertEqual(self.response.status_code, status.HTTP_200_OK)
-        self.assertIn({"id": 1, "name": "KUDL"}, self.response.data["data"])
-        self.assertIn({"id": 2, "name": "ExploreUK"}, self.response.data["data"])
+        for role in Role.objects.all():
+            self.assertIn(RoleSerializer(role).data, self.response.data["data"])
 
 
 class ArkTests(ApiJwtTestCase):
@@ -235,9 +232,11 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.response = self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.response = self.client.post(
+            self.url, data={"role_id": role.id}, format="json"
+        )
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Ark.objects.count(), 1)
         self.assertEqual(Ark.objects.get().role, Role.objects.get())
@@ -254,9 +253,11 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.response = self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.response = self.client.post(
+            self.url, data={"role_id": role.id}, format="json"
+        )
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         self.assertIn("links", self.response.data)
         links = self.response.data["links"]
@@ -266,9 +267,11 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.response = self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.response = self.client.post(
+            self.url, data={"role_id": role.id}, format="json"
+        )
         self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
         self.assertIn("data", self.response.data)
         data = self.response.data["data"]
@@ -286,9 +289,9 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.client.post(self.url, data={"role_id": role.id}, format="json")
         self.url = reverse(
             "ark-bind", kwargs={"identifier": identifier, "key": "cat_name"}
         )
@@ -307,9 +310,9 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.client.post(self.url, data={"role_id": role.id}, format="json")
         self.url = reverse("ark-bind-metadata", kwargs={"identifier": identifier})
         self.response = self.client.patch(
             self.url,
@@ -333,9 +336,9 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.client.post(self.url, data={"role_id": role.id}, format="json")
         self.url = reverse("ark-bind-metadata", kwargs={"identifier": identifier})
         self.response = self.client.patch(
             self.url,
@@ -364,9 +367,9 @@ class ArkTests(ApiJwtTestCase):
         minter = Minter.objects.get()
         identifier = minter.mint()
         partial_identifier = identifier.split("/")[1]
-        Role.objects.create(name="KUDL")
+        role = Role.objects.create(name="KUDL")
         self.url = reverse("arks", kwargs={"identifier": identifier})
-        self.client.post(self.url, data={"role_id": 1}, format="json")
+        self.client.post(self.url, data={"role_id": role.id}, format="json")
         self.url = reverse(
             "ark-bind", kwargs={"identifier": identifier, "key": "cat_name"}
         )

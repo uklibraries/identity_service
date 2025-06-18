@@ -12,11 +12,7 @@ This software is still in development flux.
 Installation
 ------------
 
-For development, you will need:
-
-* [Python](https://www.python.org/) - currently tested with 3.13
-* [Poetry](https://python-poetry.org/)
-* [SQLite](https://www.sqlite.org/)
+For development, you will need [Docker](https://www.docker.com/).
 
 Install and extract the code:
 
@@ -24,20 +20,19 @@ Install and extract the code:
 git clone git@github.com:uklibraries/identity_service.git
 ```
 
-Run a server (useful for poking around, not needed for testing):
+Start things up:
 
 ```
-cd identity_service
-poetry install --no-root
-poetry run python manage.py migrate
-poetry run python manage.py createsuperuser
-poetry run python manage.py runserver
+docker compose up
 ```
+
+This will start a Django server on port 8000 by default.
 
 Run tests:
 
 ```
-poetry run pytest-watcher .
+docker exec -it ukl-identity-dj bash
+$ uv run pytest-watcher .
 ```
 
 Note: this is currently watching all tests, both unit and integration.
