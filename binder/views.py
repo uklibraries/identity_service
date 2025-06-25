@@ -38,10 +38,9 @@ class ArkList(generics.ListCreateAPIView):
         data = request.data
         data["identifier"] = kwargs.pop("identifier", "unidentified")
         short_id = data["identifier"].split("/")[1]
-        data["metadata"] = {
-            "id": data["identifier"],
-            "short_id": short_id,
-        }
+        data.setdefault("metadata", {})
+        data["metadata"]["id"] = data["identifier"]
+        data["metadata"]["short_id"] = short_id
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

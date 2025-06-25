@@ -249,6 +249,34 @@ class ArkTests(ApiJwtTestCase):
             },
         )
 
+    def test_create_ark_with_initial_metadata(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        role = Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.response = self.client.post(
+            self.url,
+            data={
+                "role_id": role.id,
+                "metadata": {"cat_name": "Butterscotch", "cat_parent": "tv01"},
+            },
+            format="json",
+        )
+        self.assertEqual(self.response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Ark.objects.count(), 1)
+        self.assertEqual(Ark.objects.get().role, Role.objects.get())
+        self.assertEqual(Ark.objects.get().identifier, identifier)
+        self.assertEqual(
+            Ark.objects.get().metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "cat_name": "Butterscotch",
+                "cat_parent": "tv01",
+            },
+        )
+
     def test_binder_includes_links(self):
         minter = Minter.objects.get()
         identifier = minter.mint()
