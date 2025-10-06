@@ -15,6 +15,8 @@ RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
     && uv pip install psycopg --system
 
+RUN touch /app/README.md
+
 COPY pyproject.toml uv.lock /_lock/
 RUN --mount=type=cache,target=/root/.cache \
     cd /_lock && \

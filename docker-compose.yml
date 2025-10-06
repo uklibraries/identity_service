@@ -8,7 +8,17 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - .:/app
+      - identity:/app
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+
+        - action: rebuild
+          path : ./pyproject.toml
     depends_on:
       db:
         condition: service_healthy
@@ -35,6 +45,7 @@ services:
       timeout: 10s
 
 volumes:
+  identity:
   postgres_db:
 
 networks:
