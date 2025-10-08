@@ -20,6 +20,19 @@ services:
         - action: rebuild
           path : ./pyproject.toml
     depends_on:
+      - migration
+      - db
+    env_file:
+      - ./.env
+
+  migration:
+    build: .
+    networks:
+      - app-network
+    command: uv run manage.py migrate --noinput
+    volumes:
+      - identity:/app
+    depends_on:
       db:
         condition: service_healthy
         restart: true
