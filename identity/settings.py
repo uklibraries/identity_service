@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "minter",
     "binder",
+    "identity",
+    "django_extensions",
 ]
 
 REST_FRAMEWORK = {

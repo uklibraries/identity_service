@@ -23,7 +23,7 @@ git clone git@github.com:uklibraries/identity_service.git
 Start things up:
 
 ```
-docker compose up
+docker compose watch
 ```
 
 This will start a Django server on port 8000 by default.

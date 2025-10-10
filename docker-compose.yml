@@ -29,9 +29,11 @@ services:
     build: .
     networks:
       - app-network
-    command: uv run manage.py migrate --noinput
+    command: /app/entrypoint.sh
     volumes:
       - identity:/app
+      - ./initial-data:/initial-data
+      - ./entrypoint-migration.sh:/app/entrypoint.sh
     depends_on:
       db:
         condition: service_healthy

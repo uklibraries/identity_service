@@ -13,6 +13,8 @@ dependencies = [
     "noid-minter>=0.1.1,<0.2",
     "dotenv>=0.9.9",
     "psycopg[binary]>=3.2.9",
+    "django-postgres-copy>=2.8.0",
+    "django-extensions>=4.1",
 ]
 
 [dependency-groups]

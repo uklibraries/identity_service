@@ -181,6 +181,27 @@ wheels = [
 ]
 
 [[package]]
+name = "django-extensions"
+version = "4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6d/b3/ed0f54ed706ec0b54fd251cc0364a249c6cd6c6ec97f04dc34be5e929eac/django_extensions-4.1.tar.gz", hash = "sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb", size = 283078, upload-time = "2025-04-11T01:15:39.617Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/64/96/d967ca440d6a8e3861120f51985d8e5aec79b9a8bdda16041206adfe7adc/django_extensions-4.1-py3-none-any.whl", hash = "sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336", size = 232980, upload-time = "2025-04-11T01:15:37.701Z" },
+]
+
+[[package]]
+name = "django-postgres-copy"
+version = "2.8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/fc/4fe48b8cc2fd1b2402c611f5e14289ee16710557d0934967e30943dbcf71/django_postgres_copy-2.8.0.tar.gz", hash = "sha256:a39b56941412eca9cbaa59000e29b6a535dfa477011f2370d5fcf5bdf3f0411b", size = 102218, upload-time = "2025-06-22T20:19:23.664Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e1/bf/66879879856d989754929dd28562c6c8b6c42bef6736c4451df7e8a11b33/django_postgres_copy-2.8.0-py3-none-any.whl", hash = "sha256:91f86f2b7ca1a25c7ce14bdb313448daf6d1cc4b256da5a68c3b7006e7ea6000", size = 12593, upload-time = "2025-06-22T20:19:22.239Z" },
+]
+
+[[package]]
 name = "djangorestframework"
 version = "3.16.1"
 source = { registry = "https://pypi.org/simple" }
@@ -224,6 +245,8 @@ source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
     { name = "django" },
+    { name = "django-extensions" },
+    { name = "django-postgres-copy" },
     { name = "djangorestframework" },
     { name = "djangorestframework-simplejwt" },
     { name = "dotenv" },
@@ -245,6 +268,8 @@ dev = [
 requires-dist = [
     { name = "cryptography", specifier = ">=43.0.3,<44" },
     { name = "django", specifier = ">=5.1.2,<6" },
+    { name = "django-extensions", specifier = ">=4.1" },
+    { name = "django-postgres-copy", specifier = ">=2.8.0" },
     { name = "djangorestframework", specifier = ">=3.15.2,<4" },
     { name = "djangorestframework-simplejwt", specifier = ">=5.3.1,<6" },
     { name = "dotenv", specifier = ">=0.9.9" },
