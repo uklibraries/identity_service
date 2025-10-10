@@ -334,6 +334,30 @@ class ArkTests(ApiJwtTestCase):
             },
         )
 
+    def test_retrieve_all_metadata_from_ark(self):
+        minter = Minter.objects.get()
+        identifier = minter.mint()
+        partial_identifier = identifier.split("/")[1]
+        role = Role.objects.create(name="KUDL")
+        self.url = reverse("arks", kwargs={"identifier": identifier})
+        self.client.post(self.url, data={"role_id": role.id}, format="json")
+        self.url = reverse(
+            "ark-bind", kwargs={"identifier": identifier, "key": "cat_name"}
+        )
+        self.response = self.client.patch(self.url, data={"value": "Butterscotch"})
+
+        self.response = self.client.get(self.url)
+        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
+        metadata = self.response.data["metadata"]
+        self.assertEqual(
+            metadata,
+            {
+                "id": "16417/tv00",
+                "short_id": "tv00",
+                "cat_name": "Butterscotch",
+            },
+        )
+
     def test_add_multiple_metadata_fields_to_ark(self):
         minter = Minter.objects.get()
         identifier = minter.mint()
