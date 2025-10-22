@@ -16,9 +16,9 @@ class Minter(models.Model):
     state = models.JSONField(default=dict)
 
     def _initial_state(self):
-        return nm.Minter(
+        return json.loads(nm.Minter(
             {"template": self.template, "naan": str(self.naan.number)}
-        ).to_json()
+        ).to_json())
 
     def save(self, *args, **kwargs):
         if not self.state:
@@ -26,9 +26,8 @@ class Minter(models.Model):
         super(Minter, self).save(*args, **kwargs)
 
     def mint(self):
-        configuration = json.loads(self.state)
-        configuration["naan"] = str(configuration["naan"])
+        configuration = self.state
         nm_minter = nm.Minter(configuration)
         ark = nm_minter.mint().ark
-        self.state = nm_minter.to_json()
+        self.state = json.loads(nm_minter.to_json())
         return ark
