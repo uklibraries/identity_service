@@ -17,7 +17,7 @@ services:
 
   identity-web:
     build: .
-    image: ghcr.io/cokernel/identity_service:latest
+    image: ghcr.io/uklibraries/identity_service:latest
     networks:
       - app-network
     container_name: identity-web
