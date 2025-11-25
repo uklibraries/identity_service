@@ -15,6 +15,7 @@ dependencies = [
     "psycopg[binary]>=3.2.9",
     "django-postgres-copy>=2.8.0",
     "django-extensions>=4.1",
+    "gunicorn>=23.0.0",
 ]
 
 [dependency-groups]
