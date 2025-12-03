@@ -6,6 +6,8 @@ services:
       - app-network
     volumes:
       - postgres_db:/var/lib/postgresql/data/
+      - ./backups/scripts:/docker-entrypoint-initdb.d
+      - ./backups/data:/backups
     env_file:
       - .env
     healthcheck:
