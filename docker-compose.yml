@@ -27,7 +27,6 @@ services:
       - 8000
     volumes:
       - identity:/app
-      - ./initial-data:/initial-data
       - static:/app/staticfiles
     develop:
       watch:
