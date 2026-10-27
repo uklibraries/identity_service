@@ -31,7 +31,7 @@ This will start a Django server on port 8000 by default.
 Run tests:
 
 ```
-docker exec -it ukl-identity-dj bash
+docker exec -it identity-web bash
 $ uv run pytest-watcher .
 ```
 
